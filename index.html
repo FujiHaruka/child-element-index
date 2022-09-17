@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="index.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script>
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        const CHILDLEN_SIZE = 1_000;
+        const root = document.querySelector("#root");
+        root.innerHTML = Array.from({ length: CHILDLEN_SIZE })
+          .map(() => "<p>p</p>")
+          .join("");
+
+        const children = Array.from(root.children);
+
+        const methods = [
+          "usingArrayIndexOf",
+          "usingES6ArrayIndexOf",
+          "usingPreviousSibling",
+          "usingPreviousSiblingAndCache",
+          "usingBinarySearch",
+        ];
+        for (const method of methods) {
+          performance.mark(method);
+          children.forEach((child, i) => {
+            const index = indexOfElement[method](child);
+            if (index !== i) {
+              console.error(`Wrong index: ${index} at ${i} in ${method}`);
+            }
+          });
+          performance.measure(method, method);
+        }
+
+        console.table(
+          performance.getEntriesByType("measure").map(({ name, duration }) => ({
+            "method name": name,
+            "duration (ms)": duration,
+          }))
+        );
+        performance.clearMarks();
+        performance.clearMeasures();
+      }, 100);
+    });
+  </script>
+</html>
